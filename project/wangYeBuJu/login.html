@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>登录</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="nav.css"> 
+<link rel="stylesheet" type="text/css" href="login.css">
+<link rel="stylesheet" type="text/css" href="footer.css"> 
+
+<script>
+  function errNote(){
+    const url = new URL(window.location.href);
+    const err = url.searchParams.get('err');
+    if(err != null){
+      alert(err);
+    }
+  }
+</script>
+</head>
+<body onload="errNote()">
+
+<div class="header">
+  <p>JyuZung的打工日志</p> 
+</div> 
+ 
+<div class="topnav">
+  <a href="#">个人简历</a> 
+  <a href="#">团建活动</a>  
+  <a href="#">工作日志</a>  
+  <a href="#">木林森支撑</a>  
+  <a href="#" style="float:right; opacity: 0.3;"onclick="document.getElementById('loginPage').style.display='block'">
+    <img src="./pic/user.png" alt="user" style="width: 20px; height: 20px; vertical-align: middle;">
+    请登录</a>
+</div> 
+ 
+<div id="test" style="color:white; font-size: 30px; margin-top: 20px;">Text</div>
+
+ 
+ 
+<div id="loginPage" class="login-page">
+  
+  <form class="page-content animate"   action="db.html">
+    <div style="font-size: 20px; text-align: center; margin-top: 30px;"><b>Login Page</b></div>
+
+    <div class="container">
+      <input type="hidden" name="kd" value="login">
+
+      <label><b>Username</b></label>
+      <input type="text" placeholder="Enter Username" name="uname" required>
+
+      <label><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" required>
+        
+      <button type="submit">登陆</button>
+      <input type="checkbox" checked="checked"> 记住我
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('loginPage').style.display='none'" class="cancelbtn">Cancel</button>
+      <span class="psw"> <a href="./sign.html">Sign in?</a></span>
+    </div>
+  </form>
+</div>
+
+
+<footer>
+  <p>© 2024 JYUZUNG. </p>
+  <ul class="footer-links">
+      <li><a href="#">隐私政策</a></li>
+      <li><a href="#">服务条款</a></li>
+      <li><a href="#">联系我们</a></li>
+  </ul>
+</footer>
+ 
+</body>
+</html>

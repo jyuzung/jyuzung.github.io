@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>JyuZung的打工日志</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<link rel="stylesheet" type="text/css" href="nav.css">
+<link rel="stylesheet" type="text/css" href="footer.css">
+<link rel="stylesheet" type="text/css" href="tv.css">
+
+<script>
+function listDisplay(str) { 
+  document.getElementById("test").innerHTML = str; 
+  document.getElementById(str).style.display = "block"; 
+} 
+function listHidde(str) { 
+  document.getElementById(str).style.display = "none"; 
+}  
+
+function tv(){
+  // 1. 初始数据
+  const sliderData = [
+    { url: './pic/入职1.jpg', title: '对我来说会不会太超前了？' },
+    { url: './pic/入职2.jpg', title: '这纸飞机带我们开始新的旅程！' },
+    { url: './pic/入职3.jpg', title: '谁不想每天都是假期的第一天？' },
+    ]
+  const img = document.querySelector('.slider-wrapper img')
+  const p = document.querySelector('.slider-footer p')
+  let i = 1
+  setInterval(function() {
+    i++;
+    if (i >= sliderData.length)
+      i = 0;
+    document.getElementById("test").innerHTML = img; 
+    img.src = sliderData[i].url;
+    p.innerHTML = sliderData[i].title;;
+    document.querySelector('.slider-indicator .active').classList.remove('active');
+    document.querySelector(`.slider-indicator li:nth-child(${i + 1})`).classList.add('active');
+  }, 2000)
+}  
+</script>
+
+</head>
+<body onload="tv()">
+
+<div class="header">
+  <p>JyuZung的打工日志</p> 
+</div> 
+ 
+<div class="topnav">
+  <div class="dropdown" style="background:LimeGreen" onmouseover="listDisplay(lastElementChild.id)" onmouseout="listHidde(lastElementChild.id)">
+    <button class="dropbtn" style="font-size:large">入职</button>
+    <div class="dropdown-content" id="jianliDropdown">
+      <a href="./content_1.html">Employment</a> 
+    </div>
+  </div> 
+  
+  <div class="dropdown" onmouseover="listDisplay(lastElementChild.id)" onmouseout="listHidde(lastElementChild.id)">
+    <button class="dropbtn">团建活动</button>
+    <div class="dropdown-content" id="tuanjianDropdown">
+      <a href="./content_2.html">PIC collect</a>
+      <a href="#">More ...</a>
+      <a href="#">More ...</a>
+    </div>
+  </div> 
+ 
+  <div class="dropdown" onmouseover="listDisplay(lastElementChild.id)" onmouseout="listHidde(lastElementChild.id)">
+    <button class="dropbtn">工作日志</button>
+    <div class="dropdown-content" id="gongzuoDropdown">
+      <a href="./content_3.html"> Team Party</a> 
+    </div>
+  </div> 
+
+  <div class="dropdown" onmouseover="listDisplay(lastElementChild.id)" onmouseout="listHidde(lastElementChild.id)">
+    <button class="dropbtn">木林森支撑</button>
+    <div class="dropdown-content" id="mlsDropdown">
+      <a href="./content_4.html">work in MLS</a> 
+    </div>
+  </div> 
+
+
+  <a href="#" style="float:right"><img src="./pic/user.png" alt="user" style="width: 20px; height: 20px; vertical-align: middle;">
+    user，欢迎您</a>
+</div>  
+
+<div class="row">
+    <div class="leftcolumn">
+      <div class="card">
+        <div class="slider">
+          <div class="slider-wrapper">
+            <img src="./pic/入职2.jpg" alt="" />
+          </div>
+          <div class="slider-footer">
+            <p>对人类来说会不会太超前了？</p>
+            <ul class="slider-indicator">
+              <li></li>
+              <li class="active"></li>
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rightcolumn">
+      <div class="card">
+        <h2>测试信息</h2>
+        <div class="row" id="test" style="color:rgb(0, 0, 0); font-size: 30px; margin-top: 20px;">Testing...</div>
+      </div>
+       
+      <div class="card">
+        <h2>更多内容</h2>
+        <p>... ...</p>
+      </div>
+    </div>
+  </div>
+
+
+<footer>
+  <p>© 2024 JYUZUNG. </p>
+  <ul class="footer-links">
+      <li><a href="#">隐私政策</a></li>
+      <li><a href="#">服务条款</a></li>
+      <li><a href="#">联系我们</a></li>
+  </ul>
+</footer>
+
+
+</body>
+</html>
