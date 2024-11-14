@@ -1,0 +1,16 @@
+/* 底部 */
+footer {
+  padding: 20px;
+  text-align: center;
+  color:white;
+  background: #252a26cd;
+  margin-top: 20px;
+}
+footer li{
+  display: inline-block;
+  margin: 0 10px;
+}
+footer li a{
+  color: white;
+  text-decoration: none;
+}
