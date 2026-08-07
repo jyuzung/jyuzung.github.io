@@ -186,7 +186,7 @@
             overflow: hidden;
         }
 
-        /* 呼吸灯边框 —— 流动渐变 */
+        /* 呼吸灯边框 */
         .card::before {
             content: '';
             position: absolute;
@@ -298,12 +298,12 @@
             opacity: 0.6;
         }
 
-        /* ── 导航网格 ── 所有卡片悬停效果一致 */
+        /* ── 导航网格 ── */
         .nav-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
-            margin-bottom: 2.6rem;
+            margin-bottom: 2rem;
         }
         @media (max-width: 480px) {
             .nav-grid {
@@ -395,6 +395,220 @@
             border-bottom-color: #93bbfc;
         }
 
+        /* ============================================================
+               留言板 (默认隐藏，由 guestbook.js 显示)
+               ============================================================ */
+        .guestbook-section {
+            display: none;
+            margin-top: 1.2rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(203, 213, 225, 0.5);
+        }
+        .guestbook-section.show { display: block; }
+
+        .guestbook-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .guestbook-header .title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .guestbook-header .title .count {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: #94a3b8;
+            background: #e9edf4;
+            padding: 0.05rem 0.6rem;
+            border-radius: 30px;
+        }
+        .guestbook-header .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .guestbook-header .actions button {
+            background: #f1f4f9;
+            border: none;
+            border-radius: 30px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .guestbook-header .actions button:hover {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+        .guestbook-header .actions .clear-btn {
+            background: rgba(239, 68, 68, 0.10);
+            color: #ef4444;
+        }
+        .guestbook-header .actions .clear-btn:hover {
+            background: rgba(239, 68, 68, 0.20);
+        }
+
+        /* 留言列表 */
+        .guestbook-list {
+            max-height: 300px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            padding-right: 4px;
+            margin-bottom: 1rem;
+        }
+        .guestbook-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .guestbook-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.03);
+            border-radius: 10px;
+        }
+        .guestbook-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .guestbook-item {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 1rem;
+            padding: 0.8rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.2s;
+        }
+        .guestbook-item:hover {
+            background: rgba(255, 255, 255, 0.75);
+        }
+
+        .guestbook-item .meta {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.3rem;
+        }
+        .guestbook-item .avatar-letter {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .guestbook-item .nickname {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #0f172a;
+        }
+        .guestbook-item .time {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-left: auto;
+        }
+        .guestbook-item .content {
+            font-size: 0.9rem;
+            color: #1e293b;
+            padding-left: 2.4rem;
+            word-break: break-word;
+        }
+        .guestbook-item .delete-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.7rem;
+            padding: 0 0.3rem;
+            transition: color 0.2s;
+            font-family: inherit;
+            margin-left: 0.5rem;
+        }
+        .guestbook-item .delete-btn:hover {
+            color: #ef4444;
+        }
+
+        /* 留言输入区 */
+        .guestbook-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            align-items: flex-start;
+            padding-top: 0.6rem;
+            border-top: 1px solid rgba(203, 213, 225, 0.3);
+        }
+        .guestbook-form input,
+        .guestbook-form textarea {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(203, 213, 225, 0.4);
+            border-radius: 12px;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.8rem;
+            font-family: inherit;
+            color: #0f172a;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .guestbook-form input:focus,
+        .guestbook-form textarea:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.10);
+        }
+        .guestbook-form input {
+            flex: 1 1 120px;
+            min-width: 80px;
+        }
+        .guestbook-form textarea {
+            flex: 1 1 100%;
+            min-height: 50px;
+            resize: vertical;
+        }
+        .guestbook-form .submit-btn {
+            background: #6366f1;
+            border: none;
+            border-radius: 30px;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            align-self: flex-end;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+        }
+        .guestbook-form .submit-btn:hover {
+            background: #4f46e5;
+            transform: scale(1.02);
+        }
+        .guestbook-form .submit-btn:active {
+            transform: scale(0.97);
+        }
+
+        .guestbook-empty {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+            padding: 1.5rem 0;
+        }
+
         /* ── 底部 ── */
         .footer-meta {
             display: flex;
@@ -402,7 +616,7 @@
             align-items: center;
             flex-wrap: wrap;
             gap: 1rem;
-            margin-top: 0.6rem;
+            margin-top: 1.2rem;
             padding-top: 1.2rem;
             border-top: 1px solid #e9edf4;
             font-size: 0.8rem;
@@ -440,6 +654,9 @@
             }
             .city-switcher input { width: 60px; font-size: 0.7rem; }
             .city-switcher button { font-size: 0.65rem; padding: 0.2rem 0.7rem; }
+            .guestbook-item .content { padding-left: 0; }
+            .guestbook-item .meta { flex-wrap: wrap; }
+            .guestbook-item .time { margin-left: 0; width: 100%; padding-left: 2.4rem; }
         }
 
         /* ── 版本水印 ── */
@@ -656,7 +873,7 @@
     <canvas id="weather-canvas"></canvas>
 
     <!-- ============================================================
-    天气信息条 (右上) —— 默认隐藏，weather.js 加载后显示
+    天气信息条 (右上)
     ============================================================ -->
     <div class="weather-bar" id="weatherBar">
         <span class="city" id="cityDisplay">🌍 广州</span>
@@ -669,7 +886,7 @@
     </div>
 
     <!-- ============================================================
-    城市切换 (左下) —— 默认隐藏
+    城市切换 (左下)
     ============================================================ -->
     <div class="city-switcher" id="citySwitcher">
         <input type="text" id="cityInput" placeholder="城市名称" value="广州" />
@@ -680,7 +897,7 @@
     <!-- ============================================================
     版本水印
     ============================================================ -->
-    <div class="version-tip">✦ 天气动态 v2.0 + 浮动画板</div>
+    <div class="version-tip">✦ 天气 · 画板 · 留言板</div>
 
     <!-- ============================================================
     遮罩层（仅背景暗化）
@@ -688,7 +905,7 @@
     <div class="pixel-overlay" id="pixelOverlay"></div>
 
     <!-- ============================================================
-    浮动画板（右下斜靠）—— 默认隐藏，pixel.js 加载后显示
+    浮动画板（右下斜靠）
     ============================================================ -->
     <div class="float-pixel-wrapper" id="floatPixelWrapper">
         <div class="float-pixel-inner">
@@ -721,7 +938,7 @@
 
         <div class="divider"></div>
 
-        <!-- 导航网格：所有卡片均无 disabled 类，悬停效果一致 -->
+        <!-- 导航网格 -->
         <div class="nav-grid">
             <div class="nav-item">
                 <div class="label"><span class="icon">📁</span> 项目</div>
@@ -751,6 +968,14 @@
             </div>
         </div>
 
+        <!-- ============================================================
+        留言板容器 (默认隐藏，由 guestbook.js 显示)
+        ============================================================ -->
+        <div class="guestbook-section" id="guestbookSection">
+            <!-- 由 guestbook.js 动态渲染 -->
+        </div>
+
+        <!-- 底部 -->
         <div class="footer-meta">
             <span>© 2026 JyuZung</span>
             <div class="social">
@@ -767,5 +992,6 @@
     ============================================================ -->
     <script src="weather.js"></script>
     <script src="pixel.js"></script>
+    <script src="guestbook.js"></script>
 </body>
 </html>
