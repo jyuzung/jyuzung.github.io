@@ -1,164 +1,35 @@
 /* =============================================================
-   guestbook.js — 左下角预览 + 侧边栏留言板 (紫色主题)
+   guestbook.js — 左侧可收起留言板 + MockAPI 云端存储
    ============================================================= */
 
 // API 配置
 const API_BASE = 'https://6a75506a32ae1141278342d5.mockapi.io/v1/gbData';
 
 // =============================================================
-// 1. 注入样式（紫色主题 · 无背景预览）
+// 1. 注入侧边栏样式（避免污染主样式）
 // =============================================================
 function injectGuestbookStyles() {
     const style = document.createElement('style');
     style.textContent = `
-        /* ===== 紫色主题变量 ===== */
-        :root {
-            --gb-purple-50: #f5f3ff;
-            --gb-purple-100: #ede9fe;
-            --gb-purple-200: #ddd6fe;
-            --gb-purple-300: #c4b5fd;
-            --gb-purple-400: #a78bfa;
-            --gb-purple-500: #8b5cf6;
-            --gb-purple-600: #7c3aed;
-            --gb-purple-700: #6d28d9;
-            --gb-purple-800: #5b21b6;
-        }
-
-        /* ----- 左下角预览卡片 —— 无背景无边框，更大更轻盈 ----- */
-        .gb-preview {
-            position: fixed;
-            bottom: 90px;
-            left: 24px;
-            z-index: 40;
-            padding: 8px 4px 4px 4px;
-            min-width: 220px;
-            max-width: 360px;
-            cursor: pointer;
-            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-            user-select: none;
-            /* 完全透明背景，无边框 */
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-        }
-        .gb-preview:hover {
-            transform: translateY(-6px) scale(1.03);
-        }
-
-        .gb-preview .preview-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 600;
-            font-size: 1.05rem;
-            color: #5b21b6;
-            margin-bottom: 8px;
-            letter-spacing: 0.01em;
-        }
-        .gb-preview .preview-header .badge {
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: #7c3aed;
-            background: var(--gb-purple-100);
-            padding: 0.05rem 0.7rem;
-            border-radius: 30px;
-            margin-left: auto;
-            opacity: 0.8;
-        }
-
-        .gb-preview .preview-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .gb-preview .preview-item {
-            font-size: 0.95rem;
-            color: #1e293b;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 6px 8px;
-            border-radius: 12px;
-            transition: background 0.25s ease;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(139, 92, 246, 0.08);
-        }
-        .gb-preview .preview-item:hover {
-            background: rgba(255, 255, 255, 0.45);
-            border-color: rgba(139, 92, 246, 0.15);
-        }
-        .gb-preview .preview-item .pv-nick {
-            font-weight: 600;
-            color: #7c3aed;
-            white-space: nowrap;
-            max-width: 60px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex-shrink: 0;
-        }
-        .gb-preview .preview-item .pv-text {
-            color: #334155;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex: 1;
-            font-weight: 400;
-        }
-        .gb-preview .preview-empty {
-            font-size: 0.9rem;
-            color: #94a3b8;
-            text-align: center;
-            padding: 8px 0;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 12px;
-            border: 1px solid rgba(139, 92, 246, 0.06);
-        }
-
-        .gb-preview .preview-footer {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 8px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #8b5cf6;
-            padding: 4px 8px 0 8px;
-            letter-spacing: 0.02em;
-        }
-        .gb-preview .preview-footer .arrow {
-            display: inline-block;
-            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-            font-size: 1.1rem;
-            line-height: 1;
-        }
-        .gb-preview:hover .preview-footer .arrow {
-            transform: translateX(8px);
-        }
-
-        /* ----- 侧边栏容器 (紫色主题) ----- */
+        /* ----- 侧边栏容器 ----- */
         .gb-sidebar {
             position: fixed;
             left: 0;
             top: 0;
             height: 100vh;
-            width: 420px;
-            max-width: 90vw;
+            width: 380px;
+            max-width: 85vw;
             z-index: 50;
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border-right: 1px solid rgba(139, 92, 246, 0.12);
-            box-shadow: 8px 0 60px rgba(124, 58, 237, 0.06);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 4px 0 40px rgba(0, 0, 0, 0.08);
             transform: translateX(-100%);
-            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: flex;
             flex-direction: column;
-            padding: 1.8rem 1.5rem 1.5rem;
+            padding: 1.5rem 1.2rem 1.2rem;
             font-family: "Inter", -apple-system, sans-serif;
             overflow: hidden;
         }
@@ -166,36 +37,69 @@ function injectGuestbookStyles() {
             transform: translateX(0);
         }
 
-        /* ----- 侧边栏头部 (紫色) ----- */
+        /* ----- 切换按钮（固定在左侧边缘） ----- */
+        .gb-toggle-btn {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 51;
+            background: rgba(255, 255, 255, 0.70);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-left: none;
+            border-radius: 0 16px 16px 0;
+            padding: 0.6rem 0.4rem 0.6rem 0.6rem;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 2px 0 16px rgba(0, 0, 0, 0.04);
+            color: #1e293b;
+            line-height: 1;
+            user-select: none;
+        }
+        .gb-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.90);
+            padding-left: 0.8rem;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+        }
+        /* 侧边栏打开时，按钮隐藏或偏移 */
+        .gb-sidebar.open ~ .gb-toggle-btn {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ----- 侧边栏头部 ----- */
         .gb-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-shrink: 0;
             padding-bottom: 0.8rem;
-            border-bottom: 1px solid var(--gb-purple-100);
+            border-bottom: 1px solid rgba(203, 213, 225, 0.3);
             margin-bottom: 0.8rem;
         }
         .gb-header .title {
             font-weight: 700;
-            font-size: 1.15rem;
-            color: #4c1d95;
+            font-size: 1.1rem;
+            color: #0f172a;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
+            gap: 0.5rem;
         }
         .gb-header .title .count {
             font-size: 0.7rem;
-            font-weight: 500;
-            color: #7c3aed;
-            background: var(--gb-purple-100);
+            font-weight: 400;
+            color: #94a3b8;
+            background: #e9edf4;
             padding: 0.05rem 0.6rem;
             border-radius: 30px;
         }
         .gb-header .close-btn {
             background: none;
             border: none;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: #94a3b8;
             cursor: pointer;
             padding: 0 0.2rem;
@@ -204,10 +108,10 @@ function injectGuestbookStyles() {
             line-height: 1;
         }
         .gb-header .close-btn:hover {
-            color: #7c3aed;
+            color: #1e293b;
         }
 
-        /* ----- 操作栏 ----- */
+        /* ----- 操作栏（清空按钮） ----- */
         .gb-actions {
             display: flex;
             gap: 0.5rem;
@@ -215,31 +119,30 @@ function injectGuestbookStyles() {
             margin-bottom: 0.6rem;
         }
         .gb-actions button {
-            background: var(--gb-purple-50);
+            background: #f1f4f9;
             border: none;
             border-radius: 30px;
             padding: 0.2rem 0.8rem;
             font-size: 0.7rem;
             font-weight: 500;
-            color: #6d28d9;
+            color: #475569;
             cursor: pointer;
             transition: 0.2s;
             font-family: inherit;
         }
         .gb-actions button:hover {
-            background: var(--gb-purple-200);
-            color: #4c1d95;
+            background: #e2e8f0;
+            color: #0f172a;
         }
         .gb-actions .clear-btn {
-            background: rgba(239, 68, 68, 0.08);
-            color: #dc2626;
+            background: rgba(239, 68, 68, 0.10);
+            color: #ef4444;
         }
         .gb-actions .clear-btn:hover {
-            background: rgba(239, 68, 68, 0.18);
-            color: #b91c1c;
+            background: rgba(239, 68, 68, 0.20);
         }
 
-        /* ----- 留言列表 ----- */
+        /* ----- 留言列表（可滚动） ----- */
         .gb-list {
             flex: 1;
             overflow-y: auto;
@@ -254,30 +157,26 @@ function injectGuestbookStyles() {
             width: 3px;
         }
         .gb-list::-webkit-scrollbar-track {
-            background: var(--gb-purple-50);
+            background: rgba(0, 0, 0, 0.03);
             border-radius: 10px;
         }
         .gb-list::-webkit-scrollbar-thumb {
-            background: var(--gb-purple-300);
+            background: #cbd5e1;
             border-radius: 10px;
-        }
-        .gb-list::-webkit-scrollbar-thumb:hover {
-            background: var(--gb-purple-400);
         }
 
         .gb-item {
-            background: rgba(255, 255, 255, 0.55);
+            background: rgba(255, 255, 255, 0.50);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
             border-radius: 0.8rem;
             padding: 0.6rem 0.8rem;
-            border: 1px solid rgba(139, 92, 246, 0.10);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             transition: all 0.2s;
             flex-shrink: 0;
         }
         .gb-item:hover {
-            background: rgba(255, 255, 255, 0.85);
-            border-color: var(--gb-purple-200);
+            background: rgba(255, 255, 255, 0.75);
         }
         .gb-item .meta {
             display: flex;
@@ -290,7 +189,7 @@ function injectGuestbookStyles() {
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #7c3aed, #a78bfa);
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
             color: #fff;
             font-size: 0.6rem;
             font-weight: 600;
@@ -302,7 +201,7 @@ function injectGuestbookStyles() {
         .gb-item .nickname {
             font-weight: 600;
             font-size: 0.8rem;
-            color: #5b21b6;
+            color: #0f172a;
         }
         .gb-item .time {
             font-size: 0.6rem;
@@ -335,21 +234,21 @@ function injectGuestbookStyles() {
             padding: 1.5rem 0;
         }
 
-        /* ----- 输入表单 (紫色) ----- */
+        /* ----- 输入表单 ----- */
         .gb-form {
             display: flex;
             flex-wrap: wrap;
             gap: 0.4rem;
             flex-shrink: 0;
             padding-top: 0.6rem;
-            border-top: 1px solid var(--gb-purple-100);
+            border-top: 1px solid rgba(203, 213, 225, 0.3);
         }
         .gb-form input,
         .gb-form textarea {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.6);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            border: 1px solid var(--gb-purple-200);
+            border: 1px solid rgba(203, 213, 225, 0.4);
             border-radius: 10px;
             padding: 0.4rem 0.7rem;
             font-size: 0.75rem;
@@ -360,8 +259,8 @@ function injectGuestbookStyles() {
         }
         .gb-form input:focus,
         .gb-form textarea:focus {
-            border-color: #7c3aed;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.10);
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.10);
         }
         .gb-form input {
             flex: 1 1 80px;
@@ -373,7 +272,7 @@ function injectGuestbookStyles() {
             resize: vertical;
         }
         .gb-form .submit-btn {
-            background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+            background: #6366f1;
             border: none;
             border-radius: 30px;
             padding: 0.3rem 1.2rem;
@@ -383,18 +282,18 @@ function injectGuestbookStyles() {
             cursor: pointer;
             transition: 0.2s;
             font-family: inherit;
-            box-shadow: 0 2px 12px rgba(124, 58, 237, 0.25);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
             align-self: flex-end;
         }
         .gb-form .submit-btn:hover {
-            transform: scale(1.04);
-            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.30);
+            background: #4f46e5;
+            transform: scale(1.02);
         }
         .gb-form .submit-btn:active {
-            transform: scale(0.96);
+            transform: scale(0.97);
         }
 
-        /* ----- Toast 提示 ----- */
+        /* ----- Toast 提示（复用原有样式，调整位置到左侧） ----- */
         .gb-toast {
             position: fixed;
             left: 50%;
@@ -424,7 +323,7 @@ function injectGuestbookStyles() {
             transform: translateX(-50%) translateY(0);
         }
 
-        /* ----- 响应式 ----- */
+        /* ----- 响应式：小屏适配 ----- */
         @media (max-width: 480px) {
             .gb-sidebar {
                 width: 100vw;
@@ -442,28 +341,9 @@ function injectGuestbookStyles() {
                 width: 100%;
                 padding-left: 2.2rem;
             }
-            .gb-preview {
-                bottom: 75px;
-                left: 16px;
-                right: 16px;
-                max-width: none;
-                min-width: auto;
-                padding: 6px 2px 2px 2px;
-            }
-            .gb-preview .preview-item {
-                font-size: 0.85rem;
-                padding: 5px 6px;
-            }
-            .gb-preview .preview-item .pv-nick {
-                max-width: 44px;
-            }
-            .gb-preview .preview-header {
-                font-size: 0.9rem;
-            }
-        }
-        @media (max-width: 400px) {
-            .gb-preview .preview-item .pv-text {
-                max-width: 100px;
+            .gb-toggle-btn {
+                padding: 0.4rem 0.3rem 0.4rem 0.5rem;
+                font-size: 1rem;
             }
         }
     `;
@@ -471,24 +351,10 @@ function injectGuestbookStyles() {
 }
 
 // =============================================================
-// 2. 注入 HTML（预览卡片 + 侧边栏）
+// 2. 注入侧边栏 HTML
 // =============================================================
 function injectGuestbookHTML() {
     const html = `
-        <!-- 左下角预览卡片 —— 无背景无边框 -->
-        <div class="gb-preview" id="gbPreview">
-            <div class="preview-header">
-                <span>💬 最新留言</span>
-                <span class="badge" id="gbPreviewCount">0</span>
-            </div>
-            <div class="preview-list" id="gbPreviewList">
-                <div class="preview-empty">暂无留言</div>
-            </div>
-            <div class="preview-footer">
-                查看全部 <span class="arrow">→</span>
-            </div>
-        </div>
-
         <!-- 侧边栏 -->
         <div class="gb-sidebar" id="gbSidebar">
             <div class="gb-header">
@@ -510,6 +376,8 @@ function injectGuestbookHTML() {
                 <button class="submit-btn" id="gbSubmitBtn">✉ 发送</button>
             </div>
         </div>
+        <!-- 切换按钮 -->
+        <button class="gb-toggle-btn" id="gbToggleBtn" title="打开留言板">💬</button>
     `;
     document.body.insertAdjacentHTML('beforeend', html);
 }
@@ -521,9 +389,7 @@ class Guestbook {
     constructor() {
         // DOM 引用
         this.sidebar = document.getElementById('gbSidebar');
-        this.preview = document.getElementById('gbPreview');
-        this.previewList = document.getElementById('gbPreviewList');
-        this.previewCount = document.getElementById('gbPreviewCount');
+        this.toggleBtn = document.getElementById('gbToggleBtn');
         this.closeBtn = document.getElementById('gbCloseBtn');
         this.listEl = document.getElementById('gbList');
         this.countEl = document.getElementById('gbCount');
@@ -535,28 +401,41 @@ class Guestbook {
         this.messages = [];
         this.isOpen = false;
 
+        // 绑定事件
         this.bindEvents();
+
+        // 加载数据
         this.loadMessages();
-        // 默认不展开
+
+        // 默认展开（可选）
+        // this.open();
     }
 
     bindEvents() {
-        this.preview.addEventListener('click', () => this.open());
+        // 切换按钮：打开
+        this.toggleBtn.addEventListener('click', () => this.open());
+
+        // 关闭按钮：收起
         this.closeBtn.addEventListener('click', () => this.close());
 
+        // 点击外部关闭（点击侧边栏外部）
         document.addEventListener('click', (e) => {
             if (this.isOpen) {
                 const isClickInside = this.sidebar.contains(e.target);
-                const isClickPreview = this.preview.contains(e.target);
-                if (!isClickInside && !isClickPreview) {
+                const isClickToggle = this.toggleBtn.contains(e.target);
+                if (!isClickInside && !isClickToggle) {
                     this.close();
                 }
             }
         });
 
+        // 提交留言
         this.submitBtn.addEventListener('click', () => this.submitMessage());
+
+        // 清空全部
         this.clearBtn.addEventListener('click', () => this.clearAll());
 
+        // Ctrl+Enter 快捷提交
         this.contentInput.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
@@ -564,6 +443,7 @@ class Guestbook {
             }
         });
 
+        // 删除按钮（委托）
         this.listEl.addEventListener('click', (e) => {
             const deleteBtn = e.target.closest('.delete-btn');
             if (deleteBtn) {
@@ -575,16 +455,19 @@ class Guestbook {
 
     // ----- 侧边栏控制 -----
     open() {
-        if (this.isOpen) return;
         this.isOpen = true;
         this.sidebar.classList.add('open');
+        // 加载最新数据（每次打开时刷新）
         this.loadMessages();
     }
 
     close() {
-        if (!this.isOpen) return;
         this.isOpen = false;
         this.sidebar.classList.remove('open');
+    }
+
+    toggle() {
+        this.isOpen ? this.close() : this.open();
     }
 
     // ----- API 操作 -----
@@ -593,6 +476,7 @@ class Guestbook {
             const resp = await fetch(API_BASE);
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             const data = await resp.json();
+            // MockAPI 返回的数据可能包含 id, gbNickName, gbContent, createdAt 等
             this.messages = data.map(item => ({
                 id: item.id,
                 nickname: item.gbNickName || item.nickname || '匿名',
@@ -600,15 +484,14 @@ class Guestbook {
                 time: item.createdAt ? new Date(item.createdAt).toLocaleString('zh-CN') : new Date().toLocaleString('zh-CN'),
                 timestamp: item.createdAt ? new Date(item.createdAt).getTime() : Date.now()
             }));
+            // 按时间倒序（最新在前）
             this.messages.sort((a, b) => b.timestamp - a.timestamp);
             this.render();
-            this.renderPreview();
         } catch (err) {
             console.error('加载留言失败:', err);
             this.showToast('加载留言失败，请刷新重试');
             this.messages = [];
             this.render();
-            this.renderPreview();
         }
     }
 
@@ -630,7 +513,9 @@ class Guestbook {
                 body: JSON.stringify(payload)
             });
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const result = await resp.json();
             this.showToast('✅ 留言成功！');
+            // 重新加载列表
             await this.loadMessages();
             return true;
         } catch (err) {
@@ -643,7 +528,9 @@ class Guestbook {
     async deleteMessage(id) {
         if (!confirm('确定要删除这条留言吗？')) return;
         try {
-            const resp = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+            const resp = await fetch(`${API_BASE}/${id}`, {
+                method: 'DELETE'
+            });
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             this.showToast('🗑️ 已删除');
             await this.loadMessages();
@@ -660,6 +547,7 @@ class Guestbook {
         }
         if (!confirm('确定要清空所有留言吗？（将逐条删除）')) return;
 
+        // 逐条删除（MockAPI 不支持批量删除）
         let failCount = 0;
         for (const msg of this.messages) {
             try {
@@ -687,7 +575,7 @@ class Guestbook {
         }
     }
 
-    // ----- 渲染：完整侧边栏列表 -----
+    // ----- 渲染 -----
     render() {
         const count = this.messages.length;
         this.countEl.textContent = `${count} 条`;
@@ -714,31 +602,8 @@ class Guestbook {
             `;
         }).join('');
 
+        // 滚动到顶部（显示最新）
         this.listEl.scrollTop = 0;
-    }
-
-    // ----- 渲染：左下角预览（最新3条） -----
-    renderPreview() {
-        const count = this.messages.length;
-        this.previewCount.textContent = count;
-
-        const previewItems = this.messages.slice(0, 3);
-
-        if (count === 0) {
-            this.previewList.innerHTML = `<div class="preview-empty">暂无留言</div>`;
-            return;
-        }
-
-        this.previewList.innerHTML = previewItems.map(msg => {
-            const safeNick = this.escapeHTML(msg.nickname || '匿名');
-            const safeContent = this.escapeHTML(msg.content || '');
-            return `
-                <div class="preview-item">
-                    <span class="pv-nick">${safeNick}</span>
-                    <span class="pv-text">${safeContent}</span>
-                </div>
-            `;
-        }).join('');
     }
 
     // ----- 工具 -----
@@ -772,12 +637,16 @@ class Guestbook {
 // 4. 启动
 // =============================================================
 document.addEventListener('DOMContentLoaded', () => {
+    // 注入样式和 HTML
     injectGuestbookStyles();
     injectGuestbookHTML();
 
+    // 延迟一帧确保 DOM 渲染完成
     requestAnimationFrame(() => {
         const guestbook = new Guestbook();
         window.__guestbook = guestbook;
-        // 默认不弹出，只显示左下角预览
+
+        // 默认展开（首次加载时自动打开，吸引注意）
+        setTimeout(() => guestbook.open(), 300);
     });
 });
